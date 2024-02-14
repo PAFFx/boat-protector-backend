@@ -1,0 +1,261 @@
+openapi: "3.0.1"
+info:
+  title: "Ship API"
+  description: "This is an API for Ship system."
+  version: "1.0.0"
+  contact:
+    email: "ship@gmail.com"
+servers:
+  # id is subject to change
+  - url: "https://{domain}/{stage}"
+    variables:
+      id:
+        default: "test_domain"
+      stage:
+        default: "dev"
+tags:
+  - name: ship
+    description: "Operations that involve basic ship info"
+  - name: position
+    description: "Operations that involve updating of ship's position"
+  - name: emergency
+    description: "Operations that involve reporting ship emergency incident"
+paths:
+  /ships:
+    get:
+      tags:
+        - ship
+      summary: List all ships basic information.
+      description: |
+        For retrieving multiple ships's profile.
+      operationId: listShips
+      parameters:
+        - in: query
+          name: location
+          required: false
+          description: Return ships in an area with this location as center
+          schema:
+            $ref: "#/components/schemas/location"
+        - in: query
+          name: radius
+          required: false
+          description: Return ships in an area with this radius(Metre).
+          schema:
+            type: number
+            example: "10.2"
+
+      responses:
+        "200":
+          description: "OK: List ships."
+          content:
+            application/json:
+              schema:
+                required:
+                  - ships
+                properties:
+                  ships:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ship"
+    post:
+      tags:
+        - ship
+      summary: Add ship to system.
+      description: |
+        For adding ship's profile to the system.
+      operationId: postShip
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                shipName:
+                  type: string
+                  example: "boom boat"
+                shipType:
+                  $ref: "#/components/schemas/shipType"
+      responses:
+        "201":
+          description: "OK: Create ship."
+          content:
+            application/json:
+              schema:
+                properties:
+                  shipID:
+                    type: string
+                    example: "1234"
+  /ships/{ship-id}:
+    parameters:
+      - $ref: "#/components/parameters/shipID"
+    get:
+      tags:
+        - ship
+      summary: List specific ship basic information.
+      description: |
+        For retrieving ship's profile.
+      operationId: getShip
+      responses:
+        "200":
+          description: "OK: Get ship."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ship"
+  /ships/{ship-id}/position:
+    parameters:
+      - $ref: "#/components/parameters/shipID"
+    patch:
+      tags:
+        - position
+      summary: Update specific ship position
+      description: |
+        For updating ship's location
+      operationId: patchShipPosition
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                timestamp:
+                  type: integer
+                  example: 12312323
+                latitude:
+                  type: number
+                  example: 03237.4587
+                longitude:
+                  type: number
+                  example: 03237.4587
+      responses:
+        "200":
+          $ref: "#/components/responses/200"
+  /ships/{ship-id}/emergency:
+    parameters:
+      - $ref: "#/components/parameters/shipID"
+    post:
+      tags:
+        - emergency
+      summary: Reporting ship emergency
+      description: |
+        For reporting own ship emergency.
+      operationId: postShipEmergency
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                timestamp:
+                  type: integer
+                  example: 12312323
+                latitude:
+                  type: number
+                  example: 03237.4587
+                longitude:
+                  type: number
+                  example: 03237.4587
+                emergencyType:
+                  $ref: "#/components/schemas/emergencyType"
+      responses:
+        "201":
+          description: "OK: Create emergency report."
+          content:
+            application/json:
+              schema:
+                properties:
+                  emergencyID:
+                    type: string
+                    example: "1234"
+    patch:
+      tags:
+        - emergency
+      summary: Cancelling ship emergency
+      description: |
+        For cancelling reported emergency.
+      operationId: cancelShipEmergency
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                isCancelled:
+                  type: boolean
+                  example: true
+      responses:
+        "200":
+          $ref: "#/components/responses/200"
+
+components:
+  responses:
+    200:
+      description: "Server return 200 OK response."
+      content:
+        application/json:
+          schema:
+            properties:
+              code:
+                type: number
+                example: 200
+              message:
+                type: string
+                example: "OK"
+    201:
+      description: "Server return 201 created response."
+      content:
+        application/json:
+          schema:
+            properties:
+              code:
+                type: number
+                example: 201
+              message:
+                type: string
+                example: "resource created"
+  parameters:
+    shipID:
+      in: path
+      name: ship-id
+      description: uniquely identifed ship
+      schema:
+        type: string
+        example: "1234"
+      required: true
+
+  schemas:
+    location:
+      type: object
+      properties:
+        latitude:
+          type: number
+          example: 03237.4587
+        longitude:
+          type: number
+          example: 03237.4587
+    shipType:
+      type: string
+      enum: ["commercial", "transport", "personal"]
+      example: "commercial"
+    emergencyType:
+      type: string
+      enum: [SOS", "sink"]
+      example: "SOS"
+    status:
+      type: string
+      enum: ["normal", "SOS", "sink"]
+      example: "normal"
+    ship:
+      type: object
+      properties:
+        shipID:
+          type: string
+          example: "1234"
+        shipName:
+          type: string
+          example: "1234"
+        shipType:
+          $ref: "#/components/schemas/shipType"
+        status:
+          $ref: "#/components/schemas/status"
+        location:
+          $ref: "#/components/schemas/location"
