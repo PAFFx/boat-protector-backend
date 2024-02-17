@@ -2,6 +2,7 @@
 
 import { Request, Response, NextFunction } from 'express';
 import { getErrorMessage } from '../utils/logging.utils';
+import { db } from '../services/mongo.service';
 
 async function listBoatsController(req: Request, res: Response, next: NextFunction) {
   try {
