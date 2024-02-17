@@ -1,5 +1,4 @@
 import express, { Express } from 'express';
-import nodemon from 'nodemone';
 
 import { boatRouter } from './routes/boat.route';
 import config from './configs/config';
