@@ -1,10 +1,10 @@
 import express, { Request, Router } from 'express';
 
-import { listShipsController } from '../controllers/ship.controller';
+import { listBoatsController } from '../controllers/boat.controller';
 
 const boatRouter = express.Router();
 
 // Connect to ships API controller
-boatRouter.get('/', listShipsController);
+boatRouter.get('/', listBoatsController);
 
 export { boatRouter };

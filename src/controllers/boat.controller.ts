@@ -2,8 +2,9 @@
 
 import { Request, Response, NextFunction } from 'express';
 import { getErrorMessage } from '../utils/logging.utils';
+import { db } from '../services/mongo.service';
 
-async function listShipsController(req: Request, res: Response, next: NextFunction) {
+async function listBoatsController(req: Request, res: Response, next: NextFunction) {
   try {
     res.json({
       ships: 'Implement this',
@@ -14,4 +15,4 @@ async function listShipsController(req: Request, res: Response, next: NextFuncti
   }
 }
 
-export { listShipsController };
+export { listBoatsController };
