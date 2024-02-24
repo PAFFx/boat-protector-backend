@@ -22,4 +22,24 @@ async function listBoatsController(req: Request, res: Response, next: NextFuncti
   }
 }
 
-export { listBoatsController };
+async function createBoatsController(req: Request, res: Response, next: NextFunction) {
+  try {
+    const doc = {
+      status: 'normal',
+      location: {
+        latitude: null,
+        longitude: null,
+      },
+      boatName: req.body.boatName,
+      boatType: req.body.boatType,
+    };
+
+    const result = await db.boatsColl.insertOne(doc);
+    res.status(201).send({ boatID: result.insertedId.toString() });
+  } catch (err) {
+    const errMsg = getErrorMessage(err);
+    next(errMsg);
+  }
+}
+
+export { listBoatsController, createBoatsController };
