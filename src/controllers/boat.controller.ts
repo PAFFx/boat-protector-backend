@@ -3,6 +3,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { getErrorMessage } from '../utils/logging.utils';
 import { db } from '../services/mongo.service';
+import { ObjectId } from 'mongodb';
 
 async function listBoatsController(req: Request, res: Response, next: NextFunction) {
   // TODO: Implement search center query string
@@ -42,4 +43,31 @@ async function createBoatsController(req: Request, res: Response, next: NextFunc
   }
 }
 
-export { listBoatsController, createBoatsController };
+async function getBoatController(req: Request, res: Response, next: NextFunction) {
+  try {
+    const filter = {
+      _id: new ObjectId(req.params.boatID),
+    };
+    const boat = await db.boatsColl.findOne(filter);
+
+    if (boat == null) {
+      res.status(404).send('Not Found');
+      return;
+    }
+    res.status(200).send({
+      boatID: boat._id.toString(),
+      boatName: boat.boatName,
+      boatType: boat.boatType,
+      status: boat.status,
+      location: {
+        latitude: boat.location.latitude,
+        longitude: boat.location.longitude,
+      },
+    });
+  } catch (err) {
+    const errMsg = getErrorMessage(err);
+    next(errMsg);
+  }
+}
+
+export { listBoatsController, createBoatsController, getBoatController };
