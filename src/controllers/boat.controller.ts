@@ -98,4 +98,103 @@ async function patchBoatPositionController(req: Request, res: Response, next: Ne
   }
 }
 
-export { listBoatsController, createBoatsController, getBoatController, patchBoatPositionController };
+async function postBoatEmergencyController(req: Request, res: Response, next: NextFunction) {
+  try {
+    // check if id is valid
+    const filter = {
+      _id: new ObjectId(req.params.boatID),
+    };
+    const findBoatResult = await db.boatsColl.findOne(filter);
+    if (findBoatResult == null) {
+      res.status(404).send('not found');
+      return;
+    }
+    if (findBoatResult.status != 'normal') {
+      res.status(400).send('Boat is currently in emergency state');
+    }
+
+    // create emergency
+    const doc = {
+      boatID: new ObjectId(req.params.boatID),
+      timestamp: req.body.timestamp,
+      position: {
+        latitude: req.body.latitude,
+        longitude: req.body.longitude,
+      },
+      status: req.body.status,
+      active: true,
+    };
+    const insertEmergencyResult = await db.emergenciesColl.insertOne(doc);
+
+    // update boat
+    const update = {
+      $set: {
+        position: {
+          latitude: req.body.latitude,
+          longitude: req.body.longitude,
+        },
+        status: req.body.status,
+      },
+    };
+    const updateBoatResult = await db.boatsColl.findOneAndUpdate(filter, update);
+
+    res.status(200).send({
+      emergencyID: insertEmergencyResult.insertedId,
+    });
+  } catch (err) {
+    const errMsg = getErrorMessage(err);
+    next(errMsg);
+  }
+}
+
+async function patchCancelBoatEmergencyController(req: Request, res: Response, next: NextFunction) {
+  try {
+    // check if id is valid
+    const filter = {
+      _id: new ObjectId(req.params.boatID),
+    };
+    const findBoatResult = await db.boatsColl.findOne(filter);
+    if (findBoatResult == null) {
+      res.status(404).send('not found');
+      return;
+    }
+    if (findBoatResult.status == 'normal') {
+      res.status(500).send('Boat is not in any emergency state');
+      return;
+    }
+
+    // update emergency
+    const updateFilter = {
+      boatID: new ObjectId(req.params.boatID),
+      active: true,
+    };
+    const updateBody = {
+      $set: {
+        active: false,
+      },
+    };
+    const updateEmergencyResult = await db.emergenciesColl.updateMany(updateFilter, updateBody);
+
+    // update boat
+    const boatUpdateBody = {
+      $set: {
+        status: 'normal',
+      },
+    };
+    const updateBoatResult = await db.boatsColl.findOneAndUpdate(filter, boatUpdateBody);
+
+    res.status(200).send('Boat emergency cancelled');
+  } catch (err) {
+    const errMsg = getErrorMessage(err);
+    next(errMsg);
+  }
+}
+
+export {
+  listBoatsController,
+  createBoatsController,
+  getBoatController,
+  patchBoatPositionController,
+  postBoatEmergencyController,
+  patchCancelBoatEmergencyController,
+};
