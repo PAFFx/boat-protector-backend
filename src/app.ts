@@ -1,5 +1,4 @@
 import express, { Express } from 'express';
-import nodemon from 'nodemone';
 
 import { boatRouter } from './routes/boat.route';
 import config from './configs/config';
@@ -10,6 +9,12 @@ const app: Express = express();
 console.log(`launch in ${config.STATUS} mode`);
 const port: number = config.STATUS == 'production' ? config.PROD_PORT! : config.TEST_PORT;
 
+app.use(express.json());
+app.use(
+    express.urlencoded({
+        extended: true,
+    })
+);
 connectToDatabase()
     .then(() => {
         // add router

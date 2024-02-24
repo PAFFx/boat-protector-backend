@@ -13,7 +13,12 @@ CPE Embedded 2023 Project. Aim to report boat emergency situation(SOS, boat sink
  npm init
 
  npm install
+
 ```
+
+To start local mongo container `docker-compose up -d`
+
+create your secret `.env` file based on `.example.env`
 
 ## Scripts
 

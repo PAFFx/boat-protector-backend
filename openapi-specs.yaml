@@ -84,7 +84,7 @@ paths:
                                     boatID:
                                         type: string
                                         example: '1234'
-    /boats/{boat-id}:
+    /boats/{boatID}:
         parameters:
             - $ref: '#/components/parameters/boatID'
         get:
@@ -101,7 +101,7 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/boat'
-    /boats/{boat-id}/position:
+    /boats/{boatID}/position:
         parameters:
             - $ref: '#/components/parameters/boatID'
         patch:
@@ -129,7 +129,7 @@ paths:
             responses:
                 '200':
                     $ref: '#/components/responses/200'
-    /boats/{boat-id}/emergency:
+    /boats/{boatID}/emergency:
         parameters:
             - $ref: '#/components/parameters/boatID'
         post:
@@ -166,6 +166,9 @@ paths:
                                     emergencyID:
                                         type: string
                                         example: '1234'
+    /boats/{boatID}/emergency/cancel:
+        parameters:
+            - $ref: '#/components/parameters/boatID'
         patch:
             tags:
                 - emergency
@@ -173,15 +176,6 @@ paths:
             description: |
                 For cancelling reported emergency.
             operationId: cancelboatEmergency
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            type: object
-                            properties:
-                                isCancelled:
-                                    type: boolean
-                                    example: true
             responses:
                 '200':
                     $ref: '#/components/responses/200'
@@ -215,7 +209,7 @@ components:
     parameters:
         boatID:
             in: path
-            name: boat-id
+            name: boatID
             description: uniquely identifed boat
             schema:
                 type: string

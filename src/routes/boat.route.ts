@@ -1,10 +1,26 @@
 import express, { Request, Router } from 'express';
 
-import { listBoatsController } from '../controllers/boat.controller';
+import {
+  listBoatsController,
+  createBoatsController,
+  getBoatController,
+  patchBoatPositionController,
+  postBoatEmergencyController,
+  patchCancelBoatEmergencyController,
+} from '../controllers/boat.controller';
 
 const boatRouter = express.Router();
 
-// Connect to ships API controller
+// Connect to boats API controller
 boatRouter.get('/', listBoatsController);
+boatRouter.post('/', createBoatsController);
+boatRouter.get('/:boatID', getBoatController);
+
+// position
+boatRouter.patch('/:boatID/position', patchBoatPositionController);
+
+// emergency
+boatRouter.post('/:boatID/emergency', postBoatEmergencyController);
+boatRouter.patch('/:boatID/emergency/cancel', patchCancelBoatEmergencyController);
 
 export { boatRouter };
