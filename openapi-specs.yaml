@@ -84,7 +84,7 @@ paths:
                                     boatID:
                                         type: string
                                         example: '1234'
-    /boats/{boat-id}:
+    /boats/{boatID}:
         parameters:
             - $ref: '#/components/parameters/boatID'
         get:
@@ -101,7 +101,7 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/boat'
-    /boats/{boat-id}/position:
+    /boats/{boatID}/position:
         parameters:
             - $ref: '#/components/parameters/boatID'
         patch:
@@ -129,7 +129,7 @@ paths:
             responses:
                 '200':
                     $ref: '#/components/responses/200'
-    /boats/{boat-id}/emergency:
+    /boats/{boatID}/emergency:
         parameters:
             - $ref: '#/components/parameters/boatID'
         post:
@@ -215,7 +215,7 @@ components:
     parameters:
         boatID:
             in: path
-            name: boat-id
+            name: boatID
             description: uniquely identifed boat
             schema:
                 type: string
