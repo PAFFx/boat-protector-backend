@@ -70,4 +70,32 @@ async function getBoatController(req: Request, res: Response, next: NextFunction
   }
 }
 
-export { listBoatsController, createBoatsController, getBoatController };
+async function patchBoatPositionController(req: Request, res: Response, next: NextFunction) {
+  try {
+    const filter = {
+      _id: new ObjectId(req.params.boatID),
+    };
+
+    const update = {
+      $set: {
+        location: {
+          latitude: req.body.latitude,
+          longitude: req.body.longitude,
+        },
+      },
+    };
+
+    const result = await db.boatsColl.findOneAndUpdate(filter, update);
+
+    if (result == null) {
+      res.status(404).send('Not Found');
+      return;
+    }
+    res.status(200).send('edited');
+  } catch (err) {
+    const errMsg = getErrorMessage(err);
+    next(errMsg);
+  }
+}
+
+export { listBoatsController, createBoatsController, getBoatController, patchBoatPositionController };
