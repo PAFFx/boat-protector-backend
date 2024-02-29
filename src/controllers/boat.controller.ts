@@ -6,9 +6,22 @@ import { db } from '../services/mongo.service';
 import { ObjectId } from 'mongodb';
 
 async function listBoatsController(req: Request, res: Response, next: NextFunction) {
-  // TODO: Implement search center query string
   try {
-    let boats = (await db.boatsColl.find({}).toArray()).map((x) => ({
+    var filter = {};
+    if (req.query['location'] != undefined && req.query['radius'] != undefined) {
+      const location = JSON.parse(req.query['location'].toString());
+      const radius = parseFloat(req.query['radius'].toString());
+
+      filter = {
+        location: {
+          $geoWithin: {
+            // $centerSphere: [location['longitude'], location['latitude']],
+            $centerSphere: [[location['latitude'], location['longitude']], radius],
+          },
+        },
+      };
+    }
+    let boats = (await db.boatsColl.find(filter).toArray()).map((x) => ({
       boatID: x['_id'].toString(),
       boatName: x['boatName'],
       boatType: x['boatType'],
