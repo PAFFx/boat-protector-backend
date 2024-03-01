@@ -154,7 +154,7 @@ paths:
                                 longitude:
                                     type: number
                                     example: 03237.4587
-                                emergencyType:
+                                status:
                                     $ref: '#/components/schemas/emergencyType'
             responses:
                 '201':
