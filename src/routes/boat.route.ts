@@ -7,6 +7,7 @@ import {
   patchBoatPositionController,
   postBoatEmergencyController,
   patchCancelBoatEmergencyController,
+  patchBoatController,
 } from '../controllers/boat.controller';
 
 const boatRouter = express.Router();
@@ -15,6 +16,7 @@ const boatRouter = express.Router();
 boatRouter.get('/', listBoatsController);
 boatRouter.post('/', createBoatsController);
 boatRouter.get('/:boatID', getBoatController);
+boatRouter.patch('/:boatID', patchBoatController);
 
 // position
 boatRouter.patch('/:boatID/position', patchBoatPositionController);

@@ -84,6 +84,42 @@ async function getBoatController(req: Request, res: Response, next: NextFunction
   }
 }
 
+async function patchBoatController(req: Request, res: Response, next: NextFunction) {
+  try {
+    const filter = {
+      _id: new ObjectId(req.params.boatID),
+    };
+    const boat = await db.boatsColl.findOne(filter);
+
+    if (boat == null) {
+      res.status(404).send('Not Found');
+      return;
+    }
+
+    let update = Object();
+    let updateSet = Object();
+
+    if (req.body.boatName != null) {
+      updateSet.boatName = req.body.boatName;
+    }
+    if (req.body.boatType != null) {
+      updateSet.boatType = req.body.boatType;
+    }
+
+    update.$set = updateSet;
+
+    const result = await db.boatsColl.findOneAndUpdate(filter, update);
+    if (result == null) {
+      res.status(404).send('Not Found');
+      return;
+    }
+    res.status(200).send('edited');
+  } catch (err) {
+    const errMsg = getErrorMessage(err);
+    next(errMsg);
+  }
+}
+
 async function patchBoatPositionController(req: Request, res: Response, next: NextFunction) {
   try {
     const filter = {
@@ -208,6 +244,7 @@ export {
   listBoatsController,
   createBoatsController,
   getBoatController,
+  patchBoatController,
   patchBoatPositionController,
   postBoatEmergencyController,
   patchCancelBoatEmergencyController,
