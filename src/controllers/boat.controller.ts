@@ -39,13 +39,14 @@ async function listBoatsController(req: Request, res: Response, next: NextFuncti
 async function createBoatsController(req: Request, res: Response, next: NextFunction) {
   try {
     const doc = {
+      _id: new ObjectId(req.body.id),
       status: 'normal',
       location: {
         latitude: null,
         longitude: null,
       },
-      boatName: req.body.boatName,
-      boatType: req.body.boatType,
+      boatName: null,
+      boatType: null,
     };
 
     const result = await db.boatsColl.insertOne(doc);
