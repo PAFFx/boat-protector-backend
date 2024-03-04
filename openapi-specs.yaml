@@ -62,18 +62,16 @@ paths:
                 - boat
             summary: Add boat to system.
             description: |
-                For adding boat's profile to the system.
+                For adding boat to the system.
             operationId: postboat
             requestBody:
                 content:
                     application/json:
                         schema:
                             properties:
-                                boatName:
+                                id:
                                     type: string
-                                    example: 'boom boat'
-                                boatType:
-                                    $ref: '#/components/schemas/boatType'
+                                    example: 'aaaaaaaaaaaabbbbbbbbbbbb'
             responses:
                 '201':
                     description: 'OK: Create boat.'
@@ -101,6 +99,30 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/boat'
+        patch:
+            tags:
+                - boat
+            summary: Edit specific boat basic information
+            description: |
+                For editing boat basic information
+            operationId: patchBoat
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            properties:
+                                boatName:
+                                    type: string
+                                    example: 'boom boat'
+                                boatType:
+                                    $ref: '#/components/schemas/boatType'
+            responses:
+                '200':
+                    description: 'OK: Patch boat.'
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/responses/200'
     /boats/{boatID}/position:
         parameters:
             - $ref: '#/components/parameters/boatID'
